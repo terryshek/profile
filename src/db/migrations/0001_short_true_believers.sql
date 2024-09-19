@@ -1,0 +1,1 @@
+ALTER TABLE "contacts_table" ALTER COLUMN "userId" SET DATA TYPE integer;

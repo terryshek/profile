@@ -1,14 +1,37 @@
 import { Hono } from "hono";
 import { renderer } from "./renderer";
 import { db } from "./db";
-import { createContact, createSkill, createUser } from "./db/queries/insert";
-import jsx, { FC } from "hono/jsx";
-import { Hello } from "./page/hello";
-import { getContacts, getSkills, getUsers } from "./db/queries/select";
+import * as Schema from "./db/schema";
+import {
+  createCompany,
+  createContact,
+  createEducation,
+  createProject,
+  createSkill,
+  createUser,
+} from "./db/queries/insert";
+import jsx, { FC, use, useEffect, useState } from "hono/jsx";
+import {
+  getCompany,
+  getContacts,
+  getEducations,
+  getProject,
+  getSkills,
+  getUsers,
+  WorkHistory,
+} from "./db/queries/select";
 import { env } from "hono/adapter";
-import { InsertContactMethod, InsertSkillSet } from "./db/schema";
-import { Profile } from "./page/profile";
-
+import {
+  companyTable,
+  InsertCompany,
+  InsertContact,
+  InsertEducation,
+  InsertExperience,
+  InsertProject,
+  InsertSkillSet,
+  projectTable,
+} from "./db/schema";
+import { Profile } from "./page/Profile";
 interface Bindings {
   DATABASE_URL: string;
   MY_NAME: string;
@@ -18,35 +41,87 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 app.use(renderer);
 
-app.get("/generate", async (c, next) => {
+app.get("/admin", async (c) => {
+  // const client = hc<AppType>("/");
   const { DATABASE_URL } = env(c);
-  console.log("DATABASE_URL: ", DATABASE_URL);
   const database = db(DATABASE_URL);
-  try {
-    const res = await createUser(
-      { name: "Terry Shek", email: "terryashekhinshing@gmail.com", age: 35 },
-      database
-    );
-    return c.json({ res });
-  } catch (error) {
-    throw new Error(error as string);
-  }
+  const companies = await getCompany(database);
+  const initForm: InsertProject = {
+    name: "test",
+    companyId: 1,
+    description: "test",
+  };
+  return c.render(
+    <div class="bg-slate-500 p-8">
+      <div class="max-w-sm mx-auto mx">
+        <label
+          for="countries"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+        >
+          Select your company
+        </label>
+        <select
+          id="company"
+          name="company"
+          onChange={(e) => {
+            console.log("e: ", e);
+          }}
+          value={"companyId"}
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 px-4"
+        >
+          {companies.map((company) => {
+            return <option value={company.id}>{company.name}</option>;
+          })}
+        </select>
+        <div class="flex items-center justify-end my-3">
+          <button
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="button"
+          ></button>
+        </div>
+      </div>
+    </div>
+  );
+});
+app.get("/company", async (c) => {
+  const { DATABASE_URL: url } = env(c);
+  const database = db(url);
+  const workHistory = await getCompany(database);
+  return c.json<WorkHistory[]>(workHistory);
 });
 app.get("/", async (c) => {
-  const { DATABASE_URL } = env(c);
-  const database = db(DATABASE_URL);
+  const { DATABASE_URL: url } = env(c);
+  const database = db(url);
   const users = await getUsers(database);
   const skills = await getSkills(database);
   const contacts = await getContacts(database);
-  const fetching = await Promise.all([users, skills, contacts]);
+  const educations = await getEducations(database);
+  const companies = await getCompany(database);
+  const projects = await getProject(database);
+
+  const fetching = await Promise.all([
+    users,
+    skills,
+    contacts,
+    educations,
+    companies,
+    projects,
+  ]);
   return c.render(
     fetching && (
       <html>
         <head>
-          <title>Terry Profile</title>
+          <title>{users[0].name}</title>
         </head>
-        <body class={"container-fluid"}>
-          <Profile users={users} skills={skills} contacts={contacts} />
+        <body class="container-fluid">
+          <Profile
+            users={users}
+            skills={skills}
+            contacts={contacts}
+            educations={educations}
+            companies={companies}
+            projects={projects}
+          />
         </body>
       </html>
     )
@@ -54,10 +129,11 @@ app.get("/", async (c) => {
 });
 
 app.get("/contact", async (c) => {
-  const { DATABASE_URL } = env(c);
-  const database = db(DATABASE_URL);
-  const contactData: InsertContactMethod[] = [
+  const { DATABASE_URL: url } = env(c);
+  const database = db(url);
+  const contactData: InsertContact[] = [
     {
+      userId: 1,
       icon: `<svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -69,8 +145,11 @@ app.get("/contact", async (c) => {
                       </svg>`,
       label: "jcst0227@gmail.com",
       navigation: "jcst0227@gmail.com",
+      location: "hong kong",
     },
     {
+      userId: 1,
+      location: "hong kong",
       icon: `<svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"

@@ -1,9 +1,9 @@
 import { html, raw } from "hono/html";
 import { FC } from "hono/jsx";
-import { SelectContactMethod } from "../db/schema";
+import { SelectContact } from "../db/schema";
 
 export const Contact: FC<{
-  contacts: SelectContactMethod[];
+  contacts: SelectContact[];
 }> = ({ contacts }) => {
   return (
     <div class="py-3 sm:order-none order-3">
