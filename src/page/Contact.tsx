@@ -15,7 +15,7 @@ export const Contact: FC<{
           return (
             <div class="flex items-center my-1">
               <a
-                class="w-6 text-gray-700 hover:text-blue-900"
+                class="flex justify-center w-6 text-gray-700 hover:text-blue-900"
                 href={
                   contact.navigation.includes("@gmail.com")
                     ? `mailto:${contact.navigation}`
