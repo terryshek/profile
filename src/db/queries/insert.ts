@@ -7,9 +7,11 @@ import {
   InsertEducation,
   InsertProject,
   InsertSkillSet,
+  InsertTopSkill,
   InsertUser,
   projectTable,
   skillSetTable,
+  topSkillTable,
   usersTable,
 } from "../schema";
 import * as Schema from "../schema";
@@ -65,4 +67,13 @@ export async function createProject(
     .insert(projectTable)
     .values(data)
     .onConflictDoNothing({ target: projectTable.id });
+}
+export async function createTopSkill(
+  data: InsertTopSkill[],
+  db: NeonHttpDatabase<typeof Schema>
+) {
+  await db
+    .insert(topSkillTable)
+    .values(data)
+    .onConflictDoNothing({ target: topSkillTable.id });
 }

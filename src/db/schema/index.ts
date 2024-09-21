@@ -27,8 +27,28 @@ export const usersTable = pgTable("users_table", {
   email: text("email").notNull().unique("email", { nulls: "distinct" }),
 });
 
-export const userRelations = relations(usersTable, ({ one }) => ({
-  contact: one(contactTable),
+export const userRelations = relations(usersTable, ({ many }) => ({
+  contact: many(contactTable),
+  skills: many(topSkillTable),
+  education: many(educationTable),
+  profession: many(professionCertTable),
+}));
+
+export const topSkillTable = pgTable("top_skill__table", {
+  id: serial("id").primaryKey(),
+  icon: text("icon").notNull(),
+  label: text("label").notNull(),
+  userId: integer("userId")
+    .notNull()
+    .default(1)
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+});
+export const topSkillRelations = relations(topSkillTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [topSkillTable.userId],
+    references: [usersTable.id],
+    relationName: "user",
+  }),
 }));
 
 export const contactTable = pgTable("contacts_table", {
@@ -50,6 +70,22 @@ export const contactRelations = relations(contactTable, ({ one }) => ({
   }),
 }));
 
+export const companyExpTable = pgTable("company_exp_table", {
+  id: serial("id").primaryKey(),
+  companyId: integer("companyId")
+    .notNull()
+    .references(() => companyTable.id, { onDelete: "cascade" }),
+  experience: text("experience").notNull(),
+});
+
+export const companyExpRelations = relations(companyExpTable, ({ one }) => ({
+  experience: one(companyTable, {
+    fields: [companyExpTable.companyId],
+    references: [companyTable.id],
+    relationName: "company",
+  }),
+}));
+
 export const companyTable = pgTable("company_table", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -59,9 +95,10 @@ export const companyTable = pgTable("company_table", {
   to: date("to").notNull().defaultNow(),
 });
 
-export const companyRelations = relations(companyTable, ({ many }) => ({
+export const companyRelations = relations(companyTable, ({ one, many }) => ({
   projects: many(projectTable, { relationName: "company" }),
   skills: many(companySkillUsedTable, { relationName: "skill" }),
+  experience: one(companyExpTable),
 }));
 
 export const projectTable = pgTable(
@@ -142,16 +179,61 @@ export const skillSetTable = pgTable("skill_table", {
   skill: text("skill").notNull(),
 });
 
+export const accessRightTable = pgTable("access_right_table", {
+  id: serial("id").primaryKey(),
+  role: text("role", { enum: ["owner", "visitor"] }).default("visitor"),
+  password: text("password").notNull(),
+  userName: text("userName").notNull(),
+});
+
 export const educationTable = pgTable("education_table", {
   id: serial("id").primaryKey(),
   from: text("from").notNull(),
   to: text("to").notNull(),
   result: text("result").notNull(),
   school: text("school").notNull(),
-  fieldOfStudy: text("field_of_study").default("no countable"),
+  fieldOfStudy: text("field_of_study").default("non countable"),
   current: boolean("current").default(false),
   description: text("description").default("no content"),
+  userId: integer("userId")
+    .notNull()
+    .default(1)
+    .references(() => usersTable.id, { onDelete: "cascade" }),
 });
+
+export const educationRelations = relations(educationTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [educationTable.userId],
+    references: [usersTable.id],
+    relationName: "user",
+  }),
+}));
+
+export const professionCertTable = pgTable("profession_table", {
+  id: serial("id").primaryKey(),
+  from: text("from").notNull(),
+  to: text("to").notNull(),
+  result: text("result").notNull(),
+  school: text("school").notNull(),
+  fieldOfStudy: text("field_of_study").default("non countable"),
+  current: boolean("current").default(false),
+  description: text("description").default("no content"),
+  userId: integer("userId")
+    .notNull()
+    .default(1)
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+});
+
+export const professionRelations = relations(
+  professionCertTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [professionCertTable.userId],
+      references: [usersTable.id],
+      relationName: "user",
+    }),
+  })
+);
 
 export type InsertUser = typeof usersTable.$inferInsert;
 export type SelectUser = typeof usersTable.$inferSelect;
@@ -165,6 +247,9 @@ export type SelectContact = typeof contactTable.$inferSelect;
 export type InsertEducation = typeof educationTable.$inferInsert;
 export type SelectEducation = typeof educationTable.$inferSelect;
 
+export type InsertProfession = typeof professionCertTable.$inferInsert;
+export type SelectProfession = typeof professionCertTable.$inferSelect;
+
 export type InsertExperience = typeof experienceTable.$inferInsert;
 export type SelectExperience = typeof experienceTable.$inferSelect;
 
@@ -176,3 +261,8 @@ export type SelectProject = typeof projectTable.$inferSelect;
 
 export type InsertCompanySkillUsed = typeof companySkillUsedTable.$inferInsert;
 export type SelectCompanySkillUsed = typeof companySkillUsedTable.$inferSelect;
+
+export type InsertTopSkill = typeof topSkillTable.$inferInsert;
+export type SelectTopSkill = typeof topSkillTable.$inferSelect;
+
+export type SelectAccessRight = typeof accessRightTable.$inferSelect;

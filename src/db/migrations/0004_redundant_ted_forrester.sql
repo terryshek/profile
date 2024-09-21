@@ -1,0 +1,1 @@
+ALTER TABLE "top_skill__table" ALTER COLUMN "userId" SET DEFAULT 1;

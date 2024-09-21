@@ -22,9 +22,6 @@ const Education: FC<{
               <p class="text-sm font-normal text-zinc-700">
                 {education.school}
               </p>
-              <p class="font-bold text-xs text-gray-700 mb-2">
-                {education.result}
-              </p>
             </div>
           );
         })}

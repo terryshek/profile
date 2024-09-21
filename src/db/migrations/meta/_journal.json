@@ -15,6 +15,48 @@
       "when": 1726751961011,
       "tag": "0001_short_true_believers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1726756354374,
+      "tag": "0002_remarkable_puma",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1726795130674,
+      "tag": "0003_next_rick_jones",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1726795235993,
+      "tag": "0004_redundant_ted_forrester",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1726798849428,
+      "tag": "0005_dapper_mystique",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1726922004296,
+      "tag": "0006_dear_dracula",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1726922438075,
+      "tag": "0007_spooky_husk",
+      "breakpoints": true
     }
   ]
 }
