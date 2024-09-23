@@ -5,23 +5,12 @@ export const renderer = jsxRenderer(({ children }, c) => {
     <html>
       <head>
         <title>Terry Shek</title>
-        <link
-          href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css"
-          rel="stylesheet"
-        />
-        <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
-        <script
-          src="https://cdn.tailwindcss.com"
-          type="text/javascript"
-        ></script>
+        <meta charset="UTF-8" />
+        <link href="/css/output.css" rel="stylesheet" />
       </head>
       <body class="container-fluid">{children}</body>
-      <script
-        src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
-        crossorigin="anonymous"
-      ></script>
-      <script src="./static/App.tsx" type="module"></script>
+      <script src="/static/jquery/dist/jquery.min.js"></script>
+      <script src="/static/App.tsx" type="module"></script>
     </html>
   );
 });

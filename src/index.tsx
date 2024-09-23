@@ -8,6 +8,9 @@ import { basicAuth } from "hono/basic-auth";
 import { bearerAuth } from "hono/bearer-auth";
 import Demo from "./page/Demo";
 import Scroll from "./page/Scroll";
+import { getFolderDirectoryAllFiles } from "./lib/utils";
+import _ from "lodash";
+
 interface Bindings {
   DATABASE_URL: string;
   USERNAME: string;
@@ -35,26 +38,34 @@ app.use(
       const { DATABASE_URL: url } = env(c);
       const database = db(url);
       const credential = await getAccessRight(username, password, database);
-      const result = credential.length > 0 ? true : false;
-      c.set("role", credential[0].role || "visitor");
-      return result;
+      c.set("role", credential[0]?.role);
+      return credential.length > 0;
     },
     invalidUserMessage: "Unauthorized",
   })
 );
 app.get("/auth/demo", async (c) => {
-  const role = c.get("role") || "visitor";
+  const role = c.get("role") ?? "visitor";
   const { DATABASE_URL: url } = env(c);
   const database = db(url);
   const companies = await getCompany(database);
   return c.render(<Demo role={role} companies={companies} />);
 });
 app.get("/auth/scroll", async (c) => {
-  const role = c.get("role") || "visitor";
   const { DATABASE_URL: url } = env(c);
   const database = db(url);
   const companies = await getCompany(database);
-  return c.render(<Scroll companies={companies} role={role} />);
+  const companiesName = companies.map((company) => _.camelCase(company.name));
+  const companiesDemo: { [key: string]: string[] } = {};
+  for (let i = 0; i < companiesName.length; i++) {
+    const testFolder = `./public/static/${companiesName[i]}`;
+    const demoFile = getFolderDirectoryAllFiles(testFolder);
+    companiesDemo[companiesName[i]] = demoFile;
+  }
+  const role = c.get("role") ?? "visitor";
+  return c.render(
+    <Scroll companies={companies} role={role} demoFiles={companiesDemo} />
+  );
 });
 
 app.get("/", async (c) => {
@@ -62,8 +73,8 @@ app.get("/", async (c) => {
   const database = db(url);
   const users = await getUsers(database);
   const companies = await getCompany(database);
-
   const fetching = await Promise.all([users, companies]);
   return c.render(fetching && <Profile users={users} companies={companies} />);
 });
+
 export default app;

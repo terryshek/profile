@@ -12,6 +12,19 @@ const Experience: FC<{
       </h2>
       <div class="pt-4 flex flex-col">
         {companies.map((company) => {
+          const urlCheck = new RegExp(
+            "([a-zA-Z0-9]+://)?([a-zA-Z0-9_]+:[a-zA-Z0-9_]+@)?([a-zA-Z0-9.-]+\\.[A-Za-z]{2,4})(:[0-9]+)?(/.*)?"
+          );
+          const exp = company.experience?.experience || "";
+          if (urlCheck.test(exp)) {
+            console.log("It has an URL!", company.name);
+            const match = urlCheck.exec(exp);
+            if (match) {
+              console.log(`${company.name} : `, match[0]);
+            }
+          } else {
+            console.log("No URL found in ", `${company.name}`);
+          }
           return (
             <>
               <div class="flex flex-col">

@@ -7,7 +7,6 @@ import {
   SelectEducation,
   SelectCompany,
   SelectProject,
-  projectTable,
   SelectCompanySkillUsed,
   SelectTopSkill,
   SelectAccessRight,
@@ -28,15 +27,12 @@ export async function getAccessRight(
   password: string,
   db: NeonHttpDatabase<typeof Schema>
 ): Promise<SelectAccessRight[]> {
-  return db
-    .select()
-    .from(accessRightTable)
-    .where(
-      and(
-        eq(accessRightTable.userName, userName),
-        eq(accessRightTable.password, password)
-      )
-    );
+  return db.query.accessRightTable.findMany({
+    where: and(
+      eq(accessRightTable.userName, userName),
+      eq(accessRightTable.password, password)
+    ),
+  });
 }
 export async function getUsers(
   db: NeonHttpDatabase<typeof Schema>
