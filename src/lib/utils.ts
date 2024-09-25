@@ -1,14 +1,19 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import fs from "fs";
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import * as js from "node:fs";
+import path from "node:path";
+
+const { existsSync, readdirSync } = js;
+
 export function getFolderDirectoryAllFiles(folder: string): string[] {
-  return fs.existsSync(folder)
-    ? fs
-        .readdirSync(folder, { withFileTypes: true })
+  const directory = path.join(path.basename("/public"), "/static/", folder);
+
+  return existsSync(directory)
+    ? readdirSync(directory, { withFileTypes: true })
         .filter((item) => !item.isDirectory())
-        .map((item) => item.name)
+        .map((item) => {
+          return item.name;
+        })
     : [];
+}
+export function fileToNumber(file: string): number {
+  return Number(file.split(".").slice(0, -1).join("."));
 }

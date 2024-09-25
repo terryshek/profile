@@ -1,9 +1,9 @@
 name = "terryshek-profile"
+compatibility_flags = ["nodejs_compat_v2", "nodejs_als"]
 compatibility_date = "2024-09-16"
 pages_build_output_dir = "./dist"
-compatibility_flags = ["nodejs_compat"]
 
- [vars]
+[vars]
 USERNAME="terryshek"
 PASSWORD="p@ssword"
 DATABASE_URL="postgresql://profileDB_owner:Blyxn8gHa6vN@ep-mute-term-a14v0lsq.ap-southeast-1.aws.neon.tech/profileDB?sslmode=require"

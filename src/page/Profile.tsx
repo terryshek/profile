@@ -1,5 +1,5 @@
 import { SelectEducation } from "../db/schema";
-import { type FC } from "hono/jsx";
+import { useState, type FC } from "hono/jsx";
 import TopContent from "./TopContent";
 import Education from "./Education";
 import About from "./About";
@@ -13,12 +13,13 @@ import Profession from "./Profession";
 export const Profile: FC<{
   users: UserInfo[];
   companies: WorkHistory[];
-}> = ({ users, companies }) => {
+  avatar: string;
+}> = ({ users, companies, avatar }) => {
   return (
     <div class="bg-gray-100 p-4">
       <div class="border-1 shadow-lg shadow-gray-700 rounded-lg ">
         {/* <!-- top content -->  */}
-        <TopContent users={users} />
+        <TopContent users={users} avatar={avatar} />
         {/* <!-- main content --> */}
         <div class="p-5">
           <div class="flex flex-col sm:flex-row sm:mt-10">

@@ -17,9 +17,17 @@
       "@cloudflare/workers-types/2023-07-01",
       "vite/client",
       "jquery",
-      "tailwindcss"
+      "tailwindcss",
+      "node"
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx"
-  }
+  },
+  "include": [
+    "env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "public/**/*.js"
+  ]
 }

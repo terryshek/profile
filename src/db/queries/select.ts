@@ -35,9 +35,11 @@ export async function getAccessRight(
   });
 }
 export async function getUsers(
+  name: string,
   db: NeonHttpDatabase<typeof Schema>
 ): Promise<UserInfo[]> {
   return db.query.usersTable.findMany({
+    where: eq(Schema.usersTable.name, name),
     with: {
       contact: true,
       skills: true,

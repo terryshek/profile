@@ -7,12 +7,8 @@ import {
   timestamp,
   integer,
   date,
-  json,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import SkillSet from "@/page/Skills";
-import { s } from "node_modules/vite/dist/node/types.d-aGj9QkWt";
-import test from "node:test";
 
 export const tech_area_enum = text("tech", {
   enum: ["frontend", "backend", "devops"],
@@ -22,7 +18,6 @@ export const usersTable = pgTable("users_table", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   title: text("title").notNull(),
-  avatar: text("avatar").notNull(),
   introduction: text("introduction").notNull(),
   email: text("email").notNull().unique("email", { nulls: "distinct" }),
 });

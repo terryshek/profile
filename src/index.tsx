@@ -6,11 +6,15 @@ import { env } from "hono/adapter";
 import { Profile } from "./page/Profile";
 import { basicAuth } from "hono/basic-auth";
 import { bearerAuth } from "hono/bearer-auth";
-import Demo from "./page/Demo";
-import Scroll from "./page/Scroll";
-import { getFolderDirectoryAllFiles } from "./lib/utils";
-import _ from "lodash";
 
+import { fileToNumber, getFolderDirectoryAllFiles } from "./lib/utils";
+import _ from "lodash";
+import path from "node:path";
+import { serveStatic } from "hono/serve-static";
+import fs from "node:fs";
+import { pathToFileURL } from "node:url";
+import { getRouterName, showRoutes } from "hono/dev";
+import Demo from "./page/Demo";
 interface Bindings {
   DATABASE_URL: string;
   USERNAME: string;
@@ -31,6 +35,7 @@ app.use("/api/*", bearerAuth({ token }));
 app.get("/api/page", (c) => {
   return c.json({ message: "You are authorized" });
 });
+
 app.use(
   "/auth/*",
   basicAuth({
@@ -45,36 +50,52 @@ app.use(
   })
 );
 app.get("/auth/demo", async (c) => {
-  const role = c.get("role") ?? "visitor";
-  const { DATABASE_URL: url } = env(c);
-  const database = db(url);
-  const companies = await getCompany(database);
-  return c.render(<Demo role={role} companies={companies} />);
-});
-app.get("/auth/scroll", async (c) => {
   const { DATABASE_URL: url } = env(c);
   const database = db(url);
   const companies = await getCompany(database);
   const companiesName = companies.map((company) => _.camelCase(company.name));
   const companiesDemo: { [key: string]: string[] } = {};
+  const dirname = path.join("/static", "/");
+
   for (let i = 0; i < companiesName.length; i++) {
-    const testFolder = `./public/static/${companiesName[i]}`;
-    const demoFile = getFolderDirectoryAllFiles(testFolder);
+    let demoFile = getFolderDirectoryAllFiles(companiesName[i]);
+    if (companiesName[i] === "continentalHoldingsLimited") {
+      demoFile = demoFile.sort((a, b) => {
+        return fileToNumber(a) - fileToNumber(b);
+      });
+    }
     companiesDemo[companiesName[i]] = demoFile;
   }
+  console.log("companiesDemo: ", companiesDemo);
+
   const role = c.get("role") ?? "visitor";
   return c.render(
-    <Scroll companies={companies} role={role} demoFiles={companiesDemo} />
+    <Demo
+      companies={companies}
+      role={role}
+      path={dirname}
+      demoFiles={companiesDemo}
+    />
   );
 });
 
 app.get("/", async (c) => {
   const { DATABASE_URL: url } = env(c);
   const database = db(url);
-  const users = await getUsers(database);
+  const user = "Terry Shek";
+  const camelCaseUser = _.camelCase(user);
+  const users = await getUsers(user, database);
   const companies = await getCompany(database);
   const fetching = await Promise.all([users, companies]);
-  return c.render(fetching && <Profile users={users} companies={companies} />);
+  return c.render(
+    fetching && (
+      <Profile
+        users={users}
+        companies={companies}
+        avatar={path.join("./", "static", `${camelCaseUser}.jpeg`)}
+      />
+    )
+  );
 });
 
 export default app;
