@@ -1,5 +1,5 @@
 import { SelectEducation } from "../db/schema";
-import { useState, type FC } from "hono/jsx";
+import { type FC } from "hono/jsx";
 import TopContent from "./TopContent";
 import Education from "./Education";
 import About from "./About";
@@ -15,11 +15,13 @@ export const Profile: FC<{
   companies: WorkHistory[];
   avatar: string;
 }> = ({ users, companies, avatar }) => {
+  //       // once the Element has been successfully converted to canvas
   return (
-    <div class="bg-gray-100 p-4">
+    <div class="bg-gray-100 p-4" id="profile">
       <div class="border-1 shadow-lg shadow-gray-700 rounded-lg ">
         {/* <!-- top content -->  */}
         <TopContent users={users} avatar={avatar} />
+
         {/* <!-- main content --> */}
         <div class="p-5">
           <div class="flex flex-col sm:flex-row sm:mt-10">
@@ -27,35 +29,30 @@ export const Profile: FC<{
               {/* <!-- My contact --> */}
               <Contact
                 contacts={
-                  users.find((user) => user.name == "Terry Shek")?.contact!
+                  users.find((user) => user.name == "Terry Shek")?.contact ?? []
                 }
               />
               {/* <!-- top Skills --> */}
               <SkillSet
                 skills={
-                  users.find((user) => user.name == "Terry Shek")?.skills!
+                  users.find((user) => user.name == "Terry Shek")?.skills ?? []
                 }
               />
               {/* <!-- Education Background --> */}
-              <>
-                {users.find((user) => user.name == "Terry Shek")?.education ? (
-                  <Education
-                    educations={
-                      users.find((user) => user.name == "Terry Shek")
-                        ?.education!
-                    }
-                  />
-                ) : null}
-                {/* <!-- Profession History --> */}
-                {users.find((user) => user.name == "Terry Shek")?.profession ? (
-                  <Profession
-                    certifications={
-                      users.find((user) => user.name == "Terry Shek")
-                        ?.profession!
-                    }
-                  />
-                ) : null}
-              </>
+              <Education
+                educations={
+                  users.find((user) => user.name == "Terry Shek")?.education ??
+                  []
+                }
+              />
+
+              {/* <!-- Profession History --> */}
+              <Profession
+                certifications={
+                  users.find((user) => user.name == "Terry Shek")?.profession ??
+                  []
+                }
+              />
             </div>
             <div class="flex flex-col sm:w-2/3 ml-2 order-first sm:order-none sm:-mt-10">
               {/* <!-- About me --> */}

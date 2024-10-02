@@ -1,6 +1,8 @@
 import { WorkHistory } from "@/db/queries/select";
+import { detectUrl, formatDate } from "../lib/utils";
 import { date } from "drizzle-orm/pg-core";
 import { FC } from "hono/jsx";
+import { html, raw } from "hono/html";
 
 const Experience: FC<{
   companies: WorkHistory[];
@@ -37,11 +39,15 @@ const Experience: FC<{
                         {company.industry}
                       </span>
                     </div>
-                    <div>{new Date(company.to).getUTCFullYear()}</div>
+                    <div>
+                      {`${formatDate(company.from)} - ${formatDate(
+                        company.to
+                      )}`}
+                    </div>
                   </div>
                 </p>
                 <p class="text-sm font-normal pt-2">
-                  {company.experience?.experience}
+                  {raw(detectUrl(company.experience?.experience || ""))}
                 </p>
                 <div class="container py-2 pl-2">
                   {/* <!-- Projects --> */}
@@ -58,7 +64,7 @@ const Experience: FC<{
                       return (
                         <li>
                           <span class="font-semibold">{project.name}</span>-{" "}
-                          {project.description}
+                          {detectUrl(project.description)}
                         </li>
                       );
                     })}

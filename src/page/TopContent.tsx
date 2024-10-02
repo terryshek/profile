@@ -1,4 +1,4 @@
-import { FC } from "hono/jsx";
+import { FC, startViewTransition, useEffect, useState } from "hono/jsx";
 import { SelectUser } from "../db/schema";
 
 export const TopContent: FC<{ users: SelectUser[]; avatar: string }> = ({
@@ -6,7 +6,7 @@ export const TopContent: FC<{ users: SelectUser[]; avatar: string }> = ({
   avatar,
 }) => {
   return (
-    <div class="flex rounded-t-lg bg-top-color sm:px-2 w-full bg-slate-400">
+    <div class="flex rounded-t-lg bg-top-color sm:px-2 w-full bg-slate-400 justify-around topContent">
       <div class="h-40 w-40 overflow-hidden sm:rounded-full sm:relative sm:p-0 top-10 left-5 p-3">
         <img src={avatar} />
       </div>
