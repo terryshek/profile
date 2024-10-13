@@ -15,16 +15,9 @@ import { serveStatic } from "hono/serve-static";
 import { Data } from "node_modules/hono/dist/types/context";
 import { readFileSync } from "node:fs";
 import { cache } from "hono/cache";
-import * as dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 
-import {
-  Restriction,
-  DemoVideo,
-  DemoTypeObj,
-  State,
-  Bindings,
-} from "./app.service";
+import { DemoTypeObj, State, Bindings } from "./app.service";
 
 const app = new Hono<{ Bindings: Bindings; Variables: State }>();
 app.get(

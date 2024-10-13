@@ -44,7 +44,9 @@ export async function getUsers(
       contact: true,
       skills: true,
       education: true,
-      profession: true,
+      profession: {
+        orderBy: (profession, { asc }) => [asc(profession.id)],
+      },
     },
   });
 }

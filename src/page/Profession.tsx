@@ -1,7 +1,29 @@
 import { SelectProfession } from "@/db/schema";
+import { detectUrl } from "../lib/utils";
 import { FC } from "hono/jsx";
+import { raw } from "hono/html";
 
-const Profession: FC<{
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * A component that renders a list of professional certifications.
+ *
+ * Props:
+ * - certifications: An array of `SelectProfession` objects.
+ *
+ * The component renders a list of certifications, with the following format:
+ * - The `to` date of the certification, with a font size of 10px and a font
+ *   weight of 600.
+ * - The `fieldOfStudy` of the certification, with a font size of 13px and a
+ *   font weight of 500.
+ * - The `school` of the certification, with a font size of 13px and a font
+ *   weight of 400.
+ * - The `description` of the certification, with a font size of 12px and a
+ *   font weight of 400. If the description is a URL, it is rendered as a link.
+ *
+ * The component also renders a horizontal line above and below the list of
+ * certifications.
+ */
+/******  96519301-85a8-443f-a9a0-dfba7b135ebf  *******/ const Profession: FC<{
   certifications: SelectProfession[];
 }> = ({ certifications }) => {
   return (
@@ -20,6 +42,9 @@ const Profession: FC<{
                 <span class="text-green-700">{cert.fieldOfStudy}</span>,
               </p>
               <p class="text-sm font-normal text-zinc-700">{cert.school}</p>
+              <span class="text-xs text-gray-500">
+                {cert.description ? raw(detectUrl(cert.description)) : null}
+              </span>
             </div>
           );
         })}
